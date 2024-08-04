@@ -1,4 +1,4 @@
-import {Funcs} from "./types"
+import { Funcs } from "./types"
 
 const { html, body, div, h1, h2, p } = Funcs
 
@@ -15,3 +15,6 @@ const app =
             )
         )
     )
+
+
+console.log(app)
