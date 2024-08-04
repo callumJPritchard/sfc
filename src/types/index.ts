@@ -9,26 +9,23 @@ export const Funcs = new Proxy({} as FuncsType, {
     get(target, prop) {
         const ret: ComponentType = (...args: ArgType[]) => {
 
-            let attributes = ""
+            let attributes = "";
+            let content = "";
 
             for (const arg of args) {
                 if (typeof arg === "object" && !Array.isArray(arg)) {
                     for (const key in arg) {
-                        attributes += ` ${key}="${arg[key]}"`; // Using += to accumulate the attributes string
+                        attributes += ` ${key}="${arg[key]}"`;
                     }
+                } else {
+                    content += arg; // Concatenate content if it's not an object
                 }
             }
 
+            const start = `<${String(prop)}${attributes}>`;
 
-            const start = `<${prop as string}${attributes}>`
-
-            if (args.length === 0) {
-                return `${start}</${prop as string}>`
-            }
-
-
-            return `${start}${args.join("")}</${prop as string}>`
+            return `${start}${content}</${String(prop)}>`;
         }
-        return ret
+        return ret;
     }
-})
+});

@@ -10,21 +10,25 @@ function ComponentExample() {
     )
 }
 
-const app =
-    html(
-        body(
-            div(
-                {id: "something"},
-                h1("Hello, world!"),
-                p("This is a paragraph.")
-            ),
-            div(
-                h2("Another div."),
-                p("This is another paragraph.")
-            ),
-            ComponentExample()
-        )
-    )
+// const app =
+//     html(
+//         body(
+//             div(
+//                 {id: "something"},
+//                 h1("Hello, world!"),
+//                 p("This is a paragraph.")
+//             ),
+//             div(
+//                 h2("Another div."),
+//                 p("This is another paragraph.")
+//             ),
+//             ComponentExample()
+//         )
+//     )
+
+
+    const app =
+    html()
 
 
 console.log(app)
