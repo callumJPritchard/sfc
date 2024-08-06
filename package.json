@@ -7,9 +7,11 @@
   "license": "MIT",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "watch": "esbuild src/app.ts --outdir=www/js --bundle --servedir=www"
   },
   "devDependencies": {
+    "@types/node": "^22.1.0",
     "esbuild": "^0.23.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
