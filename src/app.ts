@@ -2,7 +2,7 @@ import { HtmlTags } from "./types/tags";
 
 export type ArgType = string | TagType | TreeNode | Attributes;
 
-export type TagType = (...args: ArgType[]) => TreeNode;
+export type TagType = (...args: ArgType[]) => ExtendedHTMLElement;
 
 export interface TreeNode {
   tag: string;
@@ -21,30 +21,38 @@ export interface EventListeners {
 
 export type FuncsType = Record<HtmlTags, TagType>;
 
+class ExtendedHTMLElement extends HTMLElement {
+  constructor(tagName: string) {
+    super();
+    this.attachShadow({ mode: "open" });
+    const el = document.createElement(tagName);
+    this.shadowRoot!.appendChild(el);
+    return el;
+  }
+}
+
 function FFFProto() {
   const tags = new Proxy({} as FuncsType, {
     get(_, prop: string) {
       return (...args: ArgType[]) => {
-        const node: TreeNode = {
-          tag: prop,
-          children: [],
-          attributes: {},
-          eventListeners: {},
-        };
+        const element = document.createElement(prop);
+
         if (isAttributes(args[0])) {
           const attributes = args[0] as Attributes;
           for (const key in attributes) {
             if (key.startsWith("on")) {
-              node.eventListeners[key] = attributes[key];
+              const event = key.slice(2).toLowerCase();
+              element.addEventListener(event, attributes[key]);
             } else {
-              node.attributes[key] = attributes[key];
+              element.setAttribute(key, attributes[key]);
             }
           }
-          node.children = args.slice(1);
+          appendChildren(element, args.slice(1));
         } else {
-          node.children = args;
+          appendChildren(element, args);
         }
-        return node;
+
+        return element;
       };
     },
   });
@@ -63,6 +71,19 @@ function isAttributes(arg: ArgType): arg is Attributes {
   );
 }
 
+function appendChildren(element: HTMLElement, children: ArgType[]) {
+  children.forEach((child) => {
+    if (typeof child === "string") {
+      element.appendChild(document.createTextNode(child));
+    } else if (
+      child instanceof ExtendedHTMLElement ||
+      child instanceof HTMLElement
+    ) {
+      element.appendChild(child);
+    }
+  });
+}
+
 const FFF = FFFProto();
 
 const { tags } = FFF;
@@ -77,5 +98,7 @@ const app = () =>
   );
 
 const tree = app();
+
+document.body.appendChild(tree);
 
 console.log(tree);
