@@ -89,16 +89,31 @@ const FFF = FFFProto();
 const { tags } = FFF;
 const { div, h1, h2, p, button } = tags;
 
+let cnt = 0;
+
+function inc() {
+  cnt++;
+  console.log(cnt);
+  render();
+}
+
 const app = () =>
   div(
     { id: "main-div", class: "container" },
     div({ id: "header" }, h1("Hello, world!"), p("This is a paragraph.")),
     div({ id: "content" }, h2("Another div."), p("This is another paragraph.")),
-    button({ onClick: () => alert("Button clicked!") }, "Click me")
+    button({ onClick: inc }, "Click me"),
+    p(`Counter: ${cnt}`)
   );
 
-const tree = app();
+function render() {
+  const children = document.body.children;
 
-document.body.appendChild(tree);
+  for (let i = children.length - 1; i >= 0; i--) {
+    document.body.removeChild(children[i]);
+  }
 
-console.log(tree);
+  document.body.appendChild(app());
+}
+
+render();
