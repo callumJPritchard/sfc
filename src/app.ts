@@ -1,37 +1,50 @@
 import { HtmlTags } from "./types/tags";
 
-export type ArgType = string | TagType | TreeNode | Attributes;
+export type ArgType = string | Attributes | HTMLElement;
 
-export type TagType = (...args: ArgType[]) => ExtendedHTMLElement;
-
-export interface TreeNode {
-  tag: string;
-  attributes: Attributes;
-  eventListeners: EventListeners;
-  children: ArgType[];
-}
+export type TagType = (...args: ArgType[]) => HTMLElement;
 
 export interface Attributes {
   [key: string]: any;
 }
 
-export interface EventListeners {
-  [event: string]: Function;
-}
-
 export type FuncsType = Record<HtmlTags, TagType>;
 
-class ExtendedHTMLElement extends HTMLElement {
-  constructor(tagName: string) {
-    super();
-    this.attachShadow({ mode: "open" });
-    const el = document.createElement(tagName);
-    this.shadowRoot!.appendChild(el);
-    return el;
-  }
+function stateComponent<T>(
+  initialState: T,
+  renderFunc: (state: T) => HTMLElement
+) {
+  let renderFn = () => {};
+
+  const state = new Proxy(
+    { value: initialState },
+    {
+      set(target, prop, value) {
+        if (prop === "value") {
+          target.value = value;
+          renderFn();
+        }
+        return true;
+      },
+    }
+  );
+
+  renderFn = () => {
+    const element = renderFunc(state.value);
+    const container = document.getElementById("state-container");
+    if (container) {
+      container.innerHTML = ""; // Clear the container
+      container.appendChild(element);
+    }
+  };
+
+  return [state, () => renderFunc(state.value)] as [
+    typeof state,
+    () => HTMLElement
+  ];
 }
 
-function FFFProto() {
+function tagProxy() {
   const tags = new Proxy({} as FuncsType, {
     get(_, prop: string) {
       return (...args: ArgType[]) => {
@@ -63,57 +76,45 @@ function FFFProto() {
 }
 
 function isAttributes(arg: ArgType): arg is Attributes {
-  return (
-    typeof arg === "object" &&
-    arg !== null &&
-    !Array.isArray(arg) &&
-    !("tag" in arg)
-  );
+  return typeof arg === "object" && arg !== null && !Array.isArray(arg);
 }
 
 function appendChildren(element: HTMLElement, children: ArgType[]) {
   children.forEach((child) => {
     if (typeof child === "string") {
       element.appendChild(document.createTextNode(child));
-    } else if (
-      child instanceof ExtendedHTMLElement ||
-      child instanceof HTMLElement
-    ) {
+    } else if (child instanceof HTMLElement) {
       element.appendChild(child);
     }
   });
 }
 
-const FFF = FFFProto();
+const FFF = tagProxy();
+const { div, h1, h2, p, button } = FFF.tags;
 
-const { tags } = FFF;
-const { div, h1, h2, p, button } = tags;
+function app() {
+  const [count, countState] = stateComponent(0, (state) => {
+    return p(`Counter: ${state}`);
+  });
 
-let cnt = 0;
+  function inc() {
+    count.value++;
+  }
 
-function inc() {
-  cnt++;
-  console.log(cnt);
-  render();
-}
-
-const app = () =>
-  div(
+  return div(
     { id: "main-div", class: "container" },
     div({ id: "header" }, h1("Hello, world!"), p("This is a paragraph.")),
     div({ id: "content" }, h2("Another div."), p("This is another paragraph.")),
     button({ onClick: inc }, "Click me"),
-    p(`Counter: ${cnt}`)
+    div({ id: "state-container" }, countState())
   );
+}
 
 function render() {
-  const children = document.body.children;
+  document.body.innerHTML = ""; // Clear the body content
 
-  for (let i = children.length - 1; i >= 0; i--) {
-    document.body.removeChild(children[i]);
-  }
-
-  document.body.appendChild(app());
+  const appElement = app();
+  document.body.appendChild(appElement);
 }
 
 render();
