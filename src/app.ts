@@ -1,120 +1,100 @@
 import { HtmlTags } from "./types/tags";
 
-export type ArgType = string | Attributes | HTMLElement;
+type TagType = (...args: ArgType[]) => HTMLElement;
 
-export type TagType = (...args: ArgType[]) => HTMLElement;
+type ArgType = string | HTMLElement | TagType | Record<string, any>;
 
-export interface Attributes {
-  [key: string]: any;
-}
+type TagsType = Record<HtmlTags, TagType>;
 
-export type FuncsType = Record<HtmlTags, TagType>;
-
-function stateComponent<T>(
-  initialState: T,
-  renderFunc: (state: T) => HTMLElement
+function appendChildren(
+  parent: HTMLElement,
+  ...children: (ArgType | ArgType[])[]
 ) {
-  let renderFn = () => {};
-
-  const state = new Proxy(
-    { value: initialState },
-    {
-      set(target, prop, value) {
-        if (prop === "value") {
-          target.value = value;
-          renderFn();
-        }
-        return true;
-      },
-    }
-  );
-
-  renderFn = () => {
-    const element = renderFunc(state.value);
-    const container = document.getElementById("state-container");
-    if (container) {
-      container.innerHTML = ""; // Clear the container
-      container.appendChild(element);
-    }
-  };
-
-  return [state, () => renderFunc(state.value)] as [
-    typeof state,
-    () => HTMLElement
-  ];
-}
-
-function tagProxy() {
-  const tags = new Proxy({} as FuncsType, {
-    get(_, prop: string) {
-      return (...args: ArgType[]) => {
-        const element = document.createElement(prop);
-
-        if (isAttributes(args[0])) {
-          const attributes = args[0] as Attributes;
-          for (const key in attributes) {
-            if (key.startsWith("on")) {
-              const event = key.slice(2).toLowerCase();
-              element.addEventListener(event, attributes[key]);
-            } else {
-              element.setAttribute(key, attributes[key]);
-            }
-          }
-          appendChildren(element, args.slice(1));
-        } else {
-          appendChildren(element, args);
-        }
-
-        return element;
-      };
-    },
-  });
-
-  return {
-    tags,
-  };
-}
-
-function isAttributes(arg: ArgType): arg is Attributes {
-  return typeof arg === "object" && arg !== null && !Array.isArray(arg);
-}
-
-function appendChildren(element: HTMLElement, children: ArgType[]) {
-  children.forEach((child) => {
+  children = children.flat(Infinity);
+  for (const child of children) {
     if (typeof child === "string") {
-      element.appendChild(document.createTextNode(child));
+      parent.appendChild(document.createTextNode(child));
     } else if (child instanceof HTMLElement) {
-      element.appendChild(child);
+      parent.appendChild(child);
+    } else if (typeof child === "function") {
+      const ret = child();
+      if (Array.isArray(ret)) {
+        appendChildren(parent, ret);
+      } else {
+        parent.appendChild(ret);
+      }
+    } else {
+      for (const [key, value] of Object.entries(child)) {
+        if (key.startsWith("on")) {
+          parent.addEventListener(key.slice(2).toLowerCase(), value);
+        } else parent.setAttribute(key, value);
+      }
     }
-  });
+  }
 }
 
-const FFF = tagProxy();
-const { div, h1, h2, p, button } = FFF.tags;
+const tags = new Proxy<TagsType>({} as TagsType, {
+  get(target, prop: HtmlTags) {
+    return (...args: (ArgType | ArgType[])[]) => {
+      // args = args.flat(Infinity);
+      console.log("prop", prop);
+      console.log("args", args);
 
-function app() {
-  const [count, countState] = stateComponent(0, (state) => {
-    return p(`Counter: ${state}`);
-  });
+      const element = document.createElement(prop);
+      appendChildren(element, ...args);
+      return element;
+    };
+  },
+});
 
-  function inc() {
-    count.value++;
+function createComponent<T>(
+  initial: T,
+  render: (state: T) => ArgType | ArgType[]
+) {
+  let state = initial;
+  let children: HTMLElement[] = [];
+
+  function rerender() {
+    let parent = children[0]?.parentElement;
+    for (const child of children) {
+      child.remove();
+    }
+    const res = render(state);
+    children = Array.isArray(res) ? res : [res];
+
+    if (parent) {
+      appendChildren(parent, children);
+    }
+
+    return children;
   }
 
-  return div(
-    { id: "main-div", class: "container" },
-    div({ id: "header" }, h1("Hello, world!"), p("This is a paragraph.")),
-    div({ id: "content" }, h2("Another div."), p("This is another paragraph.")),
-    button({ onClick: inc }, "Click me"),
-    div({ id: "state-container" }, countState())
-  );
+  const setState = (newState: T) => {
+    console.log("newState", newState);
+    state = newState;
+    rerender();
+  };
+  return [setState, rerender] as const;
 }
 
-function render() {
-  document.body.innerHTML = ""; // Clear the body content
+const { div, h1, p, button } = tags;
 
-  const appElement = app();
-  document.body.appendChild(appElement);
+const [, app] = createComponent({}, () => {
+  const [setCount, renderCount] = createComponent<number>(0, (count) => {
+    return button({ onclick: () => setCount(count + 1) }, `Count: ${count}`);
+  });
+
+  return div(h1("Hello"), p("World"), renderCount);
+});
+
+function mount(id: string, element: HTMLElement[]) {
+  const root = document.getElementById(id);
+  if (root) {
+    appendChildren(root, element);
+  }
 }
 
-render();
+// on load, mount the app
+window.onload = () => {
+  mount("app", app());
+};
