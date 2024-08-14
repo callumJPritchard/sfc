@@ -25,6 +25,7 @@ function appendChildren(
       }
     } else {
       for (const [key, value] of Object.entries(child)) {
+        if (value === undefined) continue;
         if (key.startsWith("on")) {
           parent.addEventListener(key.slice(2).toLowerCase(), value);
         } else parent.setAttribute(key, value);
@@ -52,15 +53,16 @@ function createComponent<T>(
 
   function rerender() {
     const res = render(state);
-    const newChildren = Array.isArray(res) ? res : [res];
+    const newChildren = (Array.isArray(res) ? res : [res]).flat(Infinity);
 
     // replace each child with the new child
-    for (let i = 0; i < Math.min(children.length, newChildren.length); i++) {
+    for (let i = 0; i < children.length; i++) {
       const child = children[i];
       const newChild = newChildren[i];
-      if (child !== newChild) {
-        child.replaceWith(newChild);
-        children[i] = newChild;
+      child.replaceWith(newChild);
+      if (i === children.length - 1) {
+        // add after the last child
+        newChild.after(...newChildren.slice(i + 1));
       }
     }
     children = newChildren;
@@ -74,6 +76,12 @@ function createComponent<T>(
   return [setState, rerender] as const;
 }
 
+function mount(id: string, element: HTMLElement) {
+  const root = document.getElementById(id);
+  if (root) {
+    appendChildren(root, element);
+  }
+}
 /////////////////////////////////////////////////////////////////////////
 ////////////////////   app definition   /////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -83,7 +91,7 @@ const { div, h1, p, button } = tags;
 function countcomponent() {
   const [setCount, renderCount] = createComponent<number>(0, (count) => {
     const ps = [];
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i <= count; i++) {
       ps.push(p(i + ""));
     }
 
@@ -98,31 +106,22 @@ function countcomponent() {
         `Count: ${count}`
       ),
       p(attributes, count + ""),
-      ...ps,
+      ps,
     ];
   });
 
   return renderCount();
 }
 
-const [, app] = createComponent({}, () => {
-  return div(
-    h1("Hello"),
-    p("World"),
-    countcomponent(),
-    p("helooooo"),
-    countcomponent()
-  );
-});
-
-function mount(id: string, element: HTMLElement[]) {
-  const root = document.getElementById(id);
-  if (root) {
-    appendChildren(root, element);
-  }
-}
+const app = div(
+  h1("Hello"),
+  p("World"),
+  countcomponent(),
+  p("helooooo"),
+  countcomponent()
+);
 
 // on load, mount the app
 window.onload = () => {
-  mount("app", app());
+  mount("app", app);
 };
