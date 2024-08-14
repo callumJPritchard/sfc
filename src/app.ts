@@ -87,9 +87,17 @@ function countcomponent() {
       ps.push(p(i + ""));
     }
 
+    const attributes = {
+      style: count % 2 === 0 ? "color: green" : undefined,
+    };
+
     return [
-      button({ onclick: () => setCount(count + 1) }, `Count: ${count}`),
-      p(count + ""),
+      button(
+        attributes,
+        { onclick: () => setCount(count + 1) },
+        `Count: ${count}`
+      ),
+      p(attributes, count + ""),
       ...ps,
     ];
   });
