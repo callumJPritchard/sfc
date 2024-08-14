@@ -8,7 +8,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node src/index.ts",
-    "watch": "esbuild src/app.ts --outdir=www/js --bundle --servedir=www"
+    "watch": "esbuild src/app.ts --outdir=www/js --bundle --servedir=www",
+    "watch:minify": "esbuild src/app.ts --outdir=www/js --bundle --minify --servedir=www"
   },
   "devDependencies": {
     "@types/node": "^22.1.0",
