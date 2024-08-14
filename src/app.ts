@@ -36,10 +36,6 @@ function appendChildren(
 const tags = new Proxy<TagsType>({} as TagsType, {
   get(target, prop: HtmlTags) {
     return (...args: (ArgType | ArgType[])[]) => {
-      // args = args.flat(Infinity);
-      console.log("prop", prop);
-      console.log("args", args);
-
       const element = document.createElement(prop);
       appendChildren(element, ...args);
       return element;
@@ -55,22 +51,23 @@ function createComponent<T>(
   let children: HTMLElement[] = [];
 
   function rerender() {
-    let parent = children[0]?.parentElement;
-    for (const child of children) {
-      child.remove();
-    }
     const res = render(state);
-    children = Array.isArray(res) ? res : [res];
+    const newChildren = Array.isArray(res) ? res : [res];
 
-    if (parent) {
-      appendChildren(parent, children);
+    // replace each child with the new child
+    for (let i = 0; i < Math.min(children.length, newChildren.length); i++) {
+      const child = children[i];
+      const newChild = newChildren[i];
+      if (child !== newChild) {
+        child.replaceWith(newChild);
+        children[i] = newChild;
+      }
     }
-
+    children = newChildren;
     return children;
   }
 
   const setState = (newState: T) => {
-    console.log("newState", newState);
     state = newState;
     rerender();
   };
@@ -79,12 +76,25 @@ function createComponent<T>(
 
 const { div, h1, p, button } = tags;
 
-const [, app] = createComponent({}, () => {
+function countcomponent() {
   const [setCount, renderCount] = createComponent<number>(0, (count) => {
-    return button({ onclick: () => setCount(count + 1) }, `Count: ${count}`);
+    return div(
+      button({ onclick: () => setCount(count + 1) }, `Count: ${count}`),
+      p(count + "")
+    );
   });
 
-  return div(h1("Hello"), p("World"), renderCount);
+  return renderCount();
+}
+
+const [, app] = createComponent({}, () => {
+  return div(
+    h1("Hello"),
+    p("World"),
+    countcomponent(),
+    p("helooooo"),
+    countcomponent()
+  );
 });
 
 function mount(id: string, element: HTMLElement[]) {
