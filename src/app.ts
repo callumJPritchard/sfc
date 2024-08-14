@@ -74,14 +74,24 @@ function createComponent<T>(
   return [setState, rerender] as const;
 }
 
+/////////////////////////////////////////////////////////////////////////
+////////////////////   app definition   /////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+
 const { div, h1, p, button } = tags;
 
 function countcomponent() {
   const [setCount, renderCount] = createComponent<number>(0, (count) => {
-    return div(
+    const ps = [];
+    for (let i = 0; i < count; i++) {
+      ps.push(p(i + ""));
+    }
+
+    return [
       button({ onclick: () => setCount(count + 1) }, `Count: ${count}`),
-      p(count + "")
-    );
+      p(count + ""),
+      ...ps,
+    ];
   });
 
   return renderCount();
