@@ -53,18 +53,19 @@ function createComponent<T>(
 
   function rerender() {
     const res = render(state);
-    const newChildren = (Array.isArray(res) ? res : [res]).flat(Infinity);
+    const newChildren: HTMLElement[] = (Array.isArray(res) ? res : [res]).flat(
+      Infinity
+    );
 
-    // replace each child with the new child
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i];
-      const newChild = newChildren[i];
-      child.replaceWith(newChild);
-      if (i === children.length - 1) {
-        // add after the last child
-        newChild.after(...newChildren.slice(i + 1));
-      }
+    // replace the first child with the new children
+    if (children[0]) {
+      children[0].replaceWith(...newChildren);
     }
+    // remove the rest of the children
+    for (const child of children.slice(1)) {
+      child.remove();
+    }
+
     children = newChildren;
     return children;
   }
@@ -105,6 +106,7 @@ function countcomponent() {
         { onclick: () => setCount(count + 1) },
         `Count: ${count}`
       ),
+      button({ onclick: () => setCount(count - 1) }, `reduce`),
       p(attributes, count + ""),
       ps,
     ];
