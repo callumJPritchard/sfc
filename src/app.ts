@@ -1,10 +1,9 @@
 import { HtmlTags } from "./types/tags";
 
-type TagType = (...args: ArgType[]) => HTMLElement;
-
-type ArgType = string | HTMLElement | TagType | Record<string, any>;
+type ArgType = string | HTMLElement | Record<string, any>;
 
 type TagsType = Record<HtmlTags, TagType>;
+type TagType = (...args: ArgType[]) => HTMLElement;
 
 function appendChildren(
   parent: HTMLElement,
@@ -17,12 +16,12 @@ function appendChildren(
     } else if (child instanceof HTMLElement) {
       parent.appendChild(child);
     } else if (typeof child === "function") {
-      const ret = child();
-      if (Array.isArray(ret)) {
-        appendChildren(parent, ret);
-      } else {
-        parent.appendChild(ret);
-      }
+      console.log(child);
+      const ret = (() => {
+        const ret = child();
+        return Array.isArray(ret) ? ret : [ret];
+      })();
+      appendChildren(parent, ret);
     } else {
       for (const [key, value] of Object.entries(child)) {
         if (value === undefined) continue;
@@ -64,6 +63,10 @@ function createComponent<T>(
     // remove the rest of the children
     for (const child of children.slice(1)) {
       child.remove();
+    }
+
+    if (newChildren.length === 0) {
+      newChildren.push(document.createElement("x"));
     }
 
     children = newChildren;
@@ -112,15 +115,34 @@ function countcomponent() {
     ];
   });
 
-  return renderCount();
+  return renderCount;
 }
+
+function forLoopExample(input: number) {
+  const [setCount, renderCount] = createComponent<number>(input, (count) => {
+    const ps = [];
+    for (let i = 0; i < count; i++) {
+      ps.push(p("count: " + i));
+    }
+
+    return ps;
+  });
+
+  return [setCount, renderCount] as const;
+}
+
+const [setCount, renderCount] = forLoopExample(0);
 
 const app = div(
   h1("Hello"),
   p("World"),
-  countcomponent(),
-  p("helooooo"),
-  countcomponent()
+  div(
+    countcomponent,
+    p("helooooo"),
+    countcomponent,
+    button({ onclick: () => setCount(10) }, "set count to 10"),
+    renderCount
+  )
 );
 
 // on load, mount the app
