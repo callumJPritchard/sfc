@@ -5,22 +5,29 @@ type ArgType = string | HTMLElement | Record<string, any>;
 type TagsType = Record<HtmlTags, TagType>;
 type TagType = (...args: ArgType[]) => HTMLElement;
 
+function toFlatArray<T>(arr: T | T[]): T[] {
+  return (Array.isArray(arr) ? arr : [arr]).flat(Infinity) as T[];
+}
+
 function appendChildren(
   parent: HTMLElement,
   ...children: (ArgType | ArgType[])[]
 ) {
   children = children.flat(Infinity);
+
+  const componentTracker = {
+    egg: "egg",
+    list: [],
+  }
+
   for (const child of children) {
     if (typeof child === "string") {
       parent.appendChild(document.createTextNode(child));
     } else if (child instanceof HTMLElement) {
       parent.appendChild(child);
     } else if (typeof child === "function") {
-      console.log(child);
-      const ret = (() => {
-        const ret = child();
-        return Array.isArray(ret) ? ret : [ret];
-      })();
+      // console.log(child);
+      const ret = toFlatArray(child.apply(componentTracker))
       appendChildren(parent, ret);
     } else {
       for (const [key, value] of Object.entries(child)) {
@@ -50,11 +57,16 @@ function createComponent<T>(
   let state = initial;
   let children: HTMLElement[] = [];
 
-  function rerender() {
+  function rerender(this: any, ...args: any[]) {
+
+    console.log(this)
+
+    if (args) {
+     console.log(args);
+    }
+
     const res = render(state);
-    const newChildren: HTMLElement[] = (Array.isArray(res) ? res : [res]).flat(
-      Infinity
-    );
+    const newChildren: HTMLElement[] = toFlatArray(res) as HTMLElement[];
 
     // replace the first child with the new children
     if (children[0]) {
@@ -66,7 +78,7 @@ function createComponent<T>(
     }
 
     if (newChildren.length === 0) {
-      newChildren.push(document.createElement("x"));
+      newChildren.push(document.createElement("template"));
     }
 
     children = newChildren;
