@@ -10,6 +10,8 @@ type Tracker = {
   p: HTMLElement;
 };
 
+const d = document;
+
 function toFlatArray<T>(arr: T | T[]): T[] {
   return (Array.isArray(arr) ? arr : [arr]).flat(Infinity) as T[];
 }
@@ -23,7 +25,7 @@ function appendChildren(
 
   for (const child of children) {
     if (typeof child === "string") {
-      parent.appendChild(document.createTextNode(child));
+      parent.appendChild(d.createTextNode(child));
     } else if (child instanceof HTMLElement) {
       parent.appendChild(child);
     } else if (typeof child === "function") {
@@ -40,13 +42,10 @@ function appendChildren(
   }
 }
 
-const tags = new Proxy<TagsType>({} as TagsType, {
-  get(target, prop: HtmlTags) {
+const tags = new Proxy({} as TagsType, {
+  get(_, prop: HtmlTags) {
     return (...args: (ArgType | ArgType[])[]) => {
-      const tracker = {
-        pL: [],
-        p: document.createElement(prop),
-      };
+      const tracker = { p: d.createElement(prop), pL: [] };
       appendChildren(tracker, ...args);
       return tracker.p;
     };
@@ -76,9 +75,7 @@ function createComponent<T>(
     const newChildren: HTMLElement[] = toFlatArray(res) as HTMLElement[];
 
     // remove old children
-    for (const child of children) {
-      child.remove();
-    }
+    children.forEach((c) => c.remove());
 
     // insert new children
     let target = p.childNodes[pL[trackerIndex]];
@@ -87,10 +84,8 @@ function createComponent<T>(
     }
 
     // update tracker indices
-    const diff = newChildren.length - children.length;
-    for (let i = trackerIndex + 1; i < pL.length; i++) {
-      pL[i] += diff;
-    }
+    for (let i = trackerIndex + 1; i < pL.length; i++)
+      pL[i] += newChildren.length - children.length;
 
     children = newChildren;
     return children;
@@ -104,7 +99,7 @@ function createComponent<T>(
 }
 
 function mount(id: string, element: HTMLElement) {
-  const p = document.getElementById(id);
+  const p = d.getElementById(id);
   if (p) {
     appendChildren(
       {
