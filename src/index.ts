@@ -6,11 +6,9 @@ type TagsType = Record<HtmlTags, TagType>;
 type TagType = (...args: ArgType[]) => HTMLElement;
 
 type Tracker = {
-  pL: number[];
+  L: number[];
   p: HTMLElement;
 };
-
-const d = document;
 
 function toFlatArray<T>(arr: T | T[]): T[] {
   return (Array.isArray(arr) ? arr : [arr]).flat(Infinity) as T[];
@@ -25,7 +23,7 @@ function appendChildren(
 
   for (const child of children) {
     if (typeof child === "string") {
-      parent.appendChild(d.createTextNode(child));
+      parent.appendChild(document.createTextNode(child));
     } else if (child instanceof HTMLElement) {
       parent.appendChild(child);
     } else if (typeof child === "function") {
@@ -45,7 +43,7 @@ function appendChildren(
 const tags = new Proxy({} as TagsType, {
   get(_, prop: HtmlTags) {
     return (...args: (ArgType | ArgType[])[]) => {
-      const tracker = { p: d.createElement(prop), pL: [] };
+      const tracker = { p: document.createElement(prop), L: [] };
       appendChildren(tracker, ...args);
       return tracker.p;
     };
@@ -65,11 +63,11 @@ function createComponent<T>(
     if (this) {
       tracker = this;
       // register where the first child should be placed
-      trackerIndex = tracker.pL.length;
-      tracker.pL.push(tracker.p.childNodes.length);
+      trackerIndex = tracker.L.length;
+      tracker.L.push(tracker.p.childNodes.length);
     }
 
-    const { p, pL } = tracker as Tracker;
+    const { p, L } = tracker as Tracker;
 
     const res = render(state);
     const newChildren: HTMLElement[] = toFlatArray(res) as HTMLElement[];
@@ -78,14 +76,13 @@ function createComponent<T>(
     children.forEach((c) => c.remove());
 
     // insert new children
-    let target = p.childNodes[pL[trackerIndex]];
-    for (let i = newChildren.length - 1; i >= 0; i--) {
+    let target = p.childNodes[L[trackerIndex]];
+    for (let i = newChildren.length - 1; i >= 0; i--)
       target = p.insertBefore(newChildren[i], target);
-    }
 
     // update tracker indices
-    for (let i = trackerIndex + 1; i < pL.length; i++)
-      pL[i] += newChildren.length - children.length;
+    for (let i = trackerIndex + 1; i < L.length; i++)
+      L[i] += newChildren.length - children.length;
 
     children = newChildren;
     return children;
@@ -98,4 +95,4 @@ function createComponent<T>(
   return [setState, rerender] as const;
 }
 
-export { tags, createComponent };
+(window as any).scooter = { tags, createComponent };
