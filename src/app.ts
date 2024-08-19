@@ -98,18 +98,6 @@ function createComponent<T>(
   return [setState, rerender] as const;
 }
 
-function mount(id: string, element: HTMLElement) {
-  const p = d.getElementById(id);
-  if (p) {
-    appendChildren(
-      {
-        p,
-        pL: [],
-      },
-      element
-    );
-  }
-}
 /////////////////////////////////////////////////////////////////////////
 ////////////////////   app definition   /////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -171,5 +159,5 @@ const app = div(
 
 // on load, mount the app
 window.onload = () => {
-  mount("app", app);
+  d.body.appendChild(app);
 };
