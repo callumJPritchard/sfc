@@ -1,0 +1,59 @@
+const { div, h1, p, button } = tags;
+
+function countcomponent() {
+  const [setCount, renderCount] = createComponent<number>(0, (count) => {
+    const ps = [];
+    for (let i = 0; i <= count; i++) {
+      ps.push(p(i + ""));
+    }
+
+    const attributes = {
+      style: count % 2 === 0 ? "color: green" : undefined,
+    };
+
+    return [
+      button(
+        attributes,
+        { onclick: () => setCount(count + 1) },
+        `Count: ${count}`
+      ),
+      button({ onclick: () => setCount(count - 1) }, `reduce`),
+      p(attributes, count + ""),
+      ps,
+    ];
+  });
+
+  return renderCount;
+}
+
+function forLoopExample(input: number) {
+  const [setCount, renderCount] = createComponent<number>(input, (count) => {
+    const ps = [];
+    for (let i = 0; i < count; i++) {
+      ps.push(p("count: " + i));
+    }
+
+    return ps;
+  });
+
+  return [setCount, renderCount] as const;
+}
+
+const [setCount, renderCount] = forLoopExample(0);
+
+const app = div(
+  h1("Hello"),
+  p("World"),
+  div(
+    countcomponent,
+    p("helooooo"),
+    countcomponent,
+    button({ onclick: () => setCount(10) }, "set count to 10"),
+    renderCount
+  )
+);
+
+// on load, mount the app
+window.onload = () => {
+  d.body.appendChild(app);
+};
