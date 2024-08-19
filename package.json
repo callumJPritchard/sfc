@@ -1,22 +1,13 @@
 {
-  "name": "FFF-1",
+  "name": "sfc",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/callumJPritchard/FFF.git",
-  "author": "callumJPritchard <cjohnpritchard@gmail.com>",
+  "author": "Callum Pritchard <cjohnpritchard@gmail.com>",
   "license": "MIT",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/index.ts",
-    "watch": "esbuild src/app.ts --outdir=www/js --bundle --servedir=www",
-    "watch:minify": "esbuild src/app.ts --outdir=www/js --bundle --minify --servedir=www"
-  },
-  "devDependencies": {
-    "esbuild": "^0.23.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
-  },
-  "dependencies": {
-    "global": "^4.4.0"
-  }
+  "workspaces": [
+    "lib",
+    "client"
+  ],
+  "packageManager": "yarn@4.4.0"
 }
