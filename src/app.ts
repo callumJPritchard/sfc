@@ -6,8 +6,8 @@ type TagsType = Record<HtmlTags, TagType>;
 type TagType = (...args: ArgType[]) => HTMLElement;
 
 type Tracker = {
-  positionList: number[];
-  parent: HTMLElement;
+  pL: number[];
+  p: HTMLElement;
 };
 
 function toFlatArray<T>(arr: T | T[]): T[] {
@@ -19,7 +19,7 @@ function appendChildren(
   ...children: (ArgType | ArgType[])[]
 ) {
   children = toFlatArray(children);
-  const parent = tracker.parent;
+  const parent = tracker.p;
 
   for (const child of children) {
     if (typeof child === "string") {
@@ -33,7 +33,7 @@ function appendChildren(
       for (const [key, value] of Object.entries(child)) {
         if (value === undefined) continue;
         if (key.startsWith("on")) {
-          parent.addEventListener(key.slice(2).toLowerCase(), value);
+          parent.addEventListener(key.slice(2), value);
         } else parent.setAttribute(key, value);
       }
     }
@@ -44,11 +44,11 @@ const tags = new Proxy<TagsType>({} as TagsType, {
   get(target, prop: HtmlTags) {
     return (...args: (ArgType | ArgType[])[]) => {
       const tracker = {
-        positionList: [],
-        parent: document.createElement(prop),
+        pL: [],
+        p: document.createElement(prop),
       };
       appendChildren(tracker, ...args);
-      return tracker.parent;
+      return tracker.p;
     };
   },
 });
@@ -66,12 +66,11 @@ function createComponent<T>(
     if (this) {
       tracker = this;
       // register where the first child should be placed
-      trackerIndex = tracker.positionList.length;
-      tracker.positionList.push(tracker.parent.childNodes.length);
+      trackerIndex = tracker.pL.length;
+      tracker.pL.push(tracker.p.childNodes.length);
     }
-    if (!tracker) {
-      throw new Error("Tracker is not defined");
-    }
+
+    const { p, pL } = tracker as Tracker;
 
     const res = render(state);
     const newChildren: HTMLElement[] = toFlatArray(res) as HTMLElement[];
@@ -82,15 +81,15 @@ function createComponent<T>(
     }
 
     // insert new children
-    let target = tracker.parent.childNodes[tracker.positionList[trackerIndex]];
+    let target = p.childNodes[pL[trackerIndex]];
     for (let i = newChildren.length - 1; i >= 0; i--) {
-      target = tracker.parent.insertBefore(newChildren[i], target);
+      target = p.insertBefore(newChildren[i], target);
     }
 
     // update tracker indices
     const diff = newChildren.length - children.length;
-    for (let i = trackerIndex + 1; i < tracker.positionList.length; i++) {
-      tracker.positionList[i] += diff;
+    for (let i = trackerIndex + 1; i < pL.length; i++) {
+      pL[i] += diff;
     }
 
     children = newChildren;
@@ -105,12 +104,12 @@ function createComponent<T>(
 }
 
 function mount(id: string, element: HTMLElement) {
-  const parent = document.getElementById(id);
-  if (parent) {
+  const p = document.getElementById(id);
+  if (p) {
     appendChildren(
       {
-        parent,
-        positionList: [],
+        p,
+        pL: [],
       },
       element
     );
