@@ -3,7 +3,16 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "watch": "esbuild src/app.ts --outdir=www/js --bundle --servedir=www",
+    "watch:minify": "esbuild src/app.ts --outdir=www/js --bundle --minify --servedir=www"
+  },
   "dependencies": {
+    "@sfc/client": "workspace:^",
     "@sfc/lib": "workspace:^"
-  }
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.0"
+  },
+  "packageManager": "yarn@4.4.0"
 }

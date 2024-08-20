@@ -100,4 +100,5 @@ function createComponent<T>(
   return [setState, updateComponent] as const;
 }
 
-(window as any).scooter = { tags, createComponent };
+// (window as any).scooter = { tags, createComponent };
+export { tags, createComponent };

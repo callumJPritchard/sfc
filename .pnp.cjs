@@ -41,16 +41,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "SOFT"\
       }]\
     ]],\
-    ["@cspotcode/source-map-support", [\
-      ["npm:0.8.1", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/@cspotcode-source-map-support-npm-0.8.1-964f2de99d-10c0.zip/node_modules/@cspotcode/source-map-support/",\
-        "packageDependencies": [\
-          ["@cspotcode/source-map-support", "npm:0.8.1"],\
-          ["@jridgewell/trace-mapping", "npm:0.3.9"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@esbuild/aix-ppc64", [\
       ["npm:0.23.1", {\
         "packageLocation": "./.yarn/unplugged/@esbuild-aix-ppc64-npm-0.23.1-6bc19cda8c/node_modules/@esbuild/aix-ppc64/",\
@@ -267,41 +257,13 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@jridgewell/resolve-uri", [\
-      ["npm:3.1.2", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/@jridgewell-resolve-uri-npm-3.1.2-5bc4245992-10c0.zip/node_modules/@jridgewell/resolve-uri/",\
-        "packageDependencies": [\
-          ["@jridgewell/resolve-uri", "npm:3.1.2"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@jridgewell/sourcemap-codec", [\
-      ["npm:1.5.0", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/@jridgewell-sourcemap-codec-npm-1.5.0-dfd9126d71-10c0.zip/node_modules/@jridgewell/sourcemap-codec/",\
-        "packageDependencies": [\
-          ["@jridgewell/sourcemap-codec", "npm:1.5.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@jridgewell/trace-mapping", [\
-      ["npm:0.3.9", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/@jridgewell-trace-mapping-npm-0.3.9-91625cd7fb-10c0.zip/node_modules/@jridgewell/trace-mapping/",\
-        "packageDependencies": [\
-          ["@jridgewell/trace-mapping", "npm:0.3.9"],\
-          ["@jridgewell/resolve-uri", "npm:3.1.2"],\
-          ["@jridgewell/sourcemap-codec", "npm:1.5.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@sfc/client", [\
       ["workspace:client", {\
         "packageLocation": "./client/",\
         "packageDependencies": [\
           ["@sfc/client", "workspace:client"],\
-          ["@sfc/lib", "workspace:lib"]\
+          ["@sfc/lib", "workspace:lib"],\
+          ["esbuild", "npm:0.23.1"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -311,103 +273,9 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./lib/",\
         "packageDependencies": [\
           ["@sfc/lib", "workspace:lib"],\
-          ["esbuild", "npm:0.23.1"],\
-          ["global", "npm:4.4.0"],\
-          ["ts-node", "virtual:475afb82240d3fdbc6dcfb95a5536756b56b7134092cb15f263cd3de366256335b0989a10ab672e9868fba43cde70afa71e7185220eb32b2f4d06cb5ce096adf#npm:10.9.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.4#optional!builtin<compat/typescript>::version=5.5.4&hash=379a07"]\
         ],\
         "linkType": "SOFT"\
-      }]\
-    ]],\
-    ["@tsconfig/node10", [\
-      ["npm:1.0.11", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/@tsconfig-node10-npm-1.0.11-ab23db00e2-10c0.zip/node_modules/@tsconfig/node10/",\
-        "packageDependencies": [\
-          ["@tsconfig/node10", "npm:1.0.11"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@tsconfig/node12", [\
-      ["npm:1.0.11", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/@tsconfig-node12-npm-1.0.11-9710d1c61b-10c0.zip/node_modules/@tsconfig/node12/",\
-        "packageDependencies": [\
-          ["@tsconfig/node12", "npm:1.0.11"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@tsconfig/node14", [\
-      ["npm:1.0.3", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/@tsconfig-node14-npm-1.0.3-15321421d2-10c0.zip/node_modules/@tsconfig/node14/",\
-        "packageDependencies": [\
-          ["@tsconfig/node14", "npm:1.0.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@tsconfig/node16", [\
-      ["npm:1.0.4", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/@tsconfig-node16-npm-1.0.4-b7cb87d859-10c0.zip/node_modules/@tsconfig/node16/",\
-        "packageDependencies": [\
-          ["@tsconfig/node16", "npm:1.0.4"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["acorn", [\
-      ["npm:8.12.1", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/acorn-npm-8.12.1-610871d57c-10c0.zip/node_modules/acorn/",\
-        "packageDependencies": [\
-          ["acorn", "npm:8.12.1"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["acorn-walk", [\
-      ["npm:8.3.3", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/acorn-walk-npm-8.3.3-868c75184d-10c0.zip/node_modules/acorn-walk/",\
-        "packageDependencies": [\
-          ["acorn-walk", "npm:8.3.3"],\
-          ["acorn", "npm:8.12.1"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["arg", [\
-      ["npm:4.1.3", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/arg-npm-4.1.3-1748b966a8-10c0.zip/node_modules/arg/",\
-        "packageDependencies": [\
-          ["arg", "npm:4.1.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["create-require", [\
-      ["npm:1.1.1", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/create-require-npm-1.1.1-839884ca2e-10c0.zip/node_modules/create-require/",\
-        "packageDependencies": [\
-          ["create-require", "npm:1.1.1"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["diff", [\
-      ["npm:4.0.2", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/diff-npm-4.0.2-73133c7102-10c0.zip/node_modules/diff/",\
-        "packageDependencies": [\
-          ["diff", "npm:4.0.2"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["dom-walk", [\
-      ["npm:0.1.2", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/dom-walk-npm-0.1.2-7d20a1a8d8-10c0.zip/node_modules/dom-walk/",\
-        "packageDependencies": [\
-          ["dom-walk", "npm:0.1.2"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["esbuild", [\
@@ -443,45 +311,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["global", [\
-      ["npm:4.4.0", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/global-npm-4.4.0-888ee8033d-10c0.zip/node_modules/global/",\
-        "packageDependencies": [\
-          ["global", "npm:4.4.0"],\
-          ["min-document", "npm:2.19.0"],\
-          ["process", "npm:0.11.10"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["make-error", [\
-      ["npm:1.3.6", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/make-error-npm-1.3.6-ccb85d9458-10c0.zip/node_modules/make-error/",\
-        "packageDependencies": [\
-          ["make-error", "npm:1.3.6"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["min-document", [\
-      ["npm:2.19.0", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/min-document-npm-2.19.0-458cdb3d84-10c0.zip/node_modules/min-document/",\
-        "packageDependencies": [\
-          ["min-document", "npm:2.19.0"],\
-          ["dom-walk", "npm:0.1.2"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["process", [\
-      ["npm:0.11.10", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/process-npm-0.11.10-aeb3b641ae-10c0.zip/node_modules/process/",\
-        "packageDependencies": [\
-          ["process", "npm:0.11.10"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["sfc", [\
       ["workspace:.", {\
         "packageLocation": "./",\
@@ -491,74 +320,11 @@ const RAW_RUNTIME_STATE =
         "linkType": "SOFT"\
       }]\
     ]],\
-    ["ts-node", [\
-      ["npm:10.9.2", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/ts-node-npm-10.9.2-3f3890b9ac-10c0.zip/node_modules/ts-node/",\
-        "packageDependencies": [\
-          ["ts-node", "npm:10.9.2"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:475afb82240d3fdbc6dcfb95a5536756b56b7134092cb15f263cd3de366256335b0989a10ab672e9868fba43cde70afa71e7185220eb32b2f4d06cb5ce096adf#npm:10.9.2", {\
-        "packageLocation": "./.yarn/__virtual__/ts-node-virtual-f2e7106023/4/AppData/Local/Yarn/Berry/cache/ts-node-npm-10.9.2-3f3890b9ac-10c0.zip/node_modules/ts-node/",\
-        "packageDependencies": [\
-          ["ts-node", "virtual:475afb82240d3fdbc6dcfb95a5536756b56b7134092cb15f263cd3de366256335b0989a10ab672e9868fba43cde70afa71e7185220eb32b2f4d06cb5ce096adf#npm:10.9.2"],\
-          ["@cspotcode/source-map-support", "npm:0.8.1"],\
-          ["@swc/core", null],\
-          ["@swc/wasm", null],\
-          ["@tsconfig/node10", "npm:1.0.11"],\
-          ["@tsconfig/node12", "npm:1.0.11"],\
-          ["@tsconfig/node14", "npm:1.0.3"],\
-          ["@tsconfig/node16", "npm:1.0.4"],\
-          ["@types/node", null],\
-          ["@types/swc__core", null],\
-          ["@types/swc__wasm", null],\
-          ["@types/typescript", null],\
-          ["acorn", "npm:8.12.1"],\
-          ["acorn-walk", "npm:8.3.3"],\
-          ["arg", "npm:4.1.3"],\
-          ["create-require", "npm:1.1.1"],\
-          ["diff", "npm:4.0.2"],\
-          ["make-error", "npm:1.3.6"],\
-          ["typescript", "patch:typescript@npm%3A5.5.4#optional!builtin<compat/typescript>::version=5.5.4&hash=379a07"],\
-          ["v8-compile-cache-lib", "npm:3.0.1"],\
-          ["yn", "npm:3.1.1"]\
-        ],\
-        "packagePeers": [\
-          "@swc/core",\
-          "@swc/wasm",\
-          "@types/node",\
-          "@types/swc__core",\
-          "@types/swc__wasm",\
-          "@types/typescript",\
-          "typescript"\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["typescript", [\
       ["patch:typescript@npm%3A5.5.4#optional!builtin<compat/typescript>::version=5.5.4&hash=379a07", {\
         "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/typescript-patch-fe43cd9db9-10c0.zip/node_modules/typescript/",\
         "packageDependencies": [\
           ["typescript", "patch:typescript@npm%3A5.5.4#optional!builtin<compat/typescript>::version=5.5.4&hash=379a07"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["v8-compile-cache-lib", [\
-      ["npm:3.0.1", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/v8-compile-cache-lib-npm-3.0.1-4886071ece-10c0.zip/node_modules/v8-compile-cache-lib/",\
-        "packageDependencies": [\
-          ["v8-compile-cache-lib", "npm:3.0.1"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["yn", [\
-      ["npm:3.1.1", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/yn-npm-3.1.1-8ad4259784-10c0.zip/node_modules/yn/",\
-        "packageDependencies": [\
-          ["yn", "npm:3.1.1"]\
         ],\
         "linkType": "HARD"\
       }]\
