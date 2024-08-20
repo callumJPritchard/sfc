@@ -1,6 +1,10 @@
 import { HtmlTags } from "./types/tags";
 
-type ArgType = string | HTMLElement | Record<string, any>;
+export type ArgType =
+  | string
+  | HTMLElement
+  | Record<string, any>
+  | ((...args: any[]) => ArgType | ArgType[]);
 
 type TagsType = Record<HtmlTags, TagType>;
 type TagType = (...args: ArgType[]) => HTMLElement;
@@ -30,7 +34,7 @@ function appendChildren(
     } else if (child instanceof HTMLElement) {
       parent.appendChild(child); // TODO would insertBefore minify better?
     } else if (typeof child === "function") {
-      const ret = toFlatArray(child.apply(tracker));
+      const ret = toFlatArray((child as any).apply(tracker));
       appendChildren(tracker, ret);
     } else {
       for (const [key, value] of Object.entries(child)) {
@@ -83,7 +87,12 @@ function createComponent<T>(
     // insert new children
     let target = p.childNodes[L[trackerIndex]];
     for (let i = newChildren.length - 1; i >= 0; i--)
-      target = p.insertBefore(newChildren[i], target);
+      try {
+        target = p.insertBefore(newChildren[i], target);
+      } catch (e) {
+        console.log(newChildren);
+        console.log(i);
+      }
 
     // update tracker indices
     for (let i = trackerIndex + 1; i < L.length; i++)
