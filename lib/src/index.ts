@@ -31,14 +31,18 @@ function appendAt(
   children = toFlatArray(children);
   const parent = tracker.p;
 
+  const handledChildren: HTMLElement[] = [];
+
   for (const child of children) {
     if (typeof child === "string") {
-      parent.insertBefore(document.createTextNode(child), target);
+      const textNode = document.createTextNode(child);
+      parent.insertBefore(textNode, target);
     } else if (child instanceof HTMLElement) {
       parent.insertBefore(child, target);
+      handledChildren.push(child);
     } else if (typeof child === "function") {
       const ret = toFlatArray((child as any).apply(tracker));
-      appendAt(tracker, target, ret);
+      handledChildren.push(...appendAt(tracker, target, ret));
     } else {
       for (const [key, value] of Object.entries(child)) {
         if (value === undefined) continue;
@@ -50,11 +54,15 @@ function appendAt(
       }
     }
   }
+
+  return handledChildren;
 }
+
+type TagArgs = [Attributes, ...ArgType[]] | ArgType[];
 
 const tags = new Proxy({} as TagsType, {
   get(_, prop: HtmlTags) {
-    return (...args: (ArgType | ArgType[])[]) => {
+    return (...args: TagArgs) => {
       // tracker keeps position of all components under an element
       // TODO: does this work for empty components under components?
       const tracker = { p: document.createElement(prop), L: [] };
@@ -87,17 +95,18 @@ function createComponent<T>(
     const newChildren: HTMLElement[] = toFlatArray(res) as HTMLElement[];
 
     // remove old children
-    children.forEach((c) => c.remove());
+    children.forEach((c) => {
+      if (c instanceof HTMLElement) c.remove();
+    });
 
-    // insert new children
+    // insert new children using appendAt and track them
     let target = p.childNodes[L[trackerIndex]];
-    appendAt(tracker as Tracker, target, newChildren);
+    children = appendAt(tracker as Tracker, target, ...newChildren);
 
     // update tracker indices
     for (let i = trackerIndex + 1; i < L.length; i++)
-      L[i] += newChildren.length - children.length;
+      L[i] += children.length - newChildren.length;
 
-    children = newChildren;
     return children;
   }
 
