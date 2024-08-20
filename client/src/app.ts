@@ -23,11 +23,11 @@ const app = div(
     pageLets(
       h1("Page 1"),
       h1("Page 2"),
-      h1("Page 3")
-      //   countcomponent,
-      //   countcomponent(3),
-      //   countcomponent(5),
-      //   countcomponent(7)
+      h1("Page 3"),
+      //   countcomponent
+      countcomponent(3),
+      countcomponent(5),
+      countcomponent(7)
     )
   )
 );

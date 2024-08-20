@@ -3,11 +3,13 @@ import { HtmlTags } from "./types/tags";
 export type ArgType =
   | string
   | HTMLElement
-  | Record<string, any>
+  | Attributes
   | ((...args: any[]) => ArgType | ArgType[]);
 
 type TagsType = Record<HtmlTags, TagType>;
 type TagType = (...args: ArgType[]) => HTMLElement;
+
+type Attributes = Record<string, any>;
 
 type Tracker = {
   L: number[];
@@ -21,8 +23,9 @@ function toFlatArray<T>(arr: T | T[]): T[] {
 
 // append children to the parent element, recursively if needed
 // TODO: does this work for empty components under components?
-function appendChildren(
+function appendAt(
   tracker: Tracker,
+  target: ChildNode | null,
   ...children: (ArgType | ArgType[])[]
 ) {
   children = toFlatArray(children);
@@ -30,18 +33,20 @@ function appendChildren(
 
   for (const child of children) {
     if (typeof child === "string") {
-      parent.appendChild(document.createTextNode(child)); // TODO would insertBefore minify better?
+      parent.insertBefore(document.createTextNode(child), target);
     } else if (child instanceof HTMLElement) {
-      parent.appendChild(child); // TODO would insertBefore minify better?
+      parent.insertBefore(child, target);
     } else if (typeof child === "function") {
       const ret = toFlatArray((child as any).apply(tracker));
-      appendChildren(tracker, ret);
+      appendAt(tracker, target, ret);
     } else {
       for (const [key, value] of Object.entries(child)) {
         if (value === undefined) continue;
         if (key.startsWith("on")) {
           parent.addEventListener(key.slice(2), value);
-        } else parent.setAttribute(key, value);
+        } else {
+          parent.setAttribute(key, value);
+        }
       }
     }
   }
@@ -53,7 +58,7 @@ const tags = new Proxy({} as TagsType, {
       // tracker keeps position of all components under an element
       // TODO: does this work for empty components under components?
       const tracker = { p: document.createElement(prop), L: [] };
-      appendChildren(tracker, ...args);
+      appendAt(tracker, null, ...args);
       return tracker.p;
     };
   },
@@ -86,13 +91,7 @@ function createComponent<T>(
 
     // insert new children
     let target = p.childNodes[L[trackerIndex]];
-    for (let i = newChildren.length - 1; i >= 0; i--)
-      try {
-        target = p.insertBefore(newChildren[i], target);
-      } catch (e) {
-        console.log(newChildren);
-        console.log(i);
-      }
+    appendAt(tracker as Tracker, target, newChildren);
 
     // update tracker indices
     for (let i = trackerIndex + 1; i < L.length; i++)
