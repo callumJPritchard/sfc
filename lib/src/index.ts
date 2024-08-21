@@ -95,9 +95,7 @@ function createComponent<T>(
     const newChildren: HTMLElement[] = toFlatArray(res) as HTMLElement[];
 
     // remove old children
-    children.forEach((c) => {
-      if (c instanceof HTMLElement) c.remove();
-    });
+    children.forEach((c) => c.remove());
 
     // insert new children using appendAt and track them
     let target = p.childNodes[L[trackerIndex]];
