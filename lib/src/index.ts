@@ -38,7 +38,13 @@ function appendAt(
       const textNode = document.createTextNode(child);
       parent.insertBefore(textNode, target);
     } else if (child instanceof HTMLElement) {
-      parent.insertBefore(child, target);
+      try {
+        parent.insertBefore(child, target);
+      } catch (e) {
+        console.log("error", e);
+        console.log("child", child);
+        console.log("parent", parent);
+      }
       handledChildren.push(child);
     } else if (typeof child === "function") {
       const ret = toFlatArray((child as any).apply(tracker));

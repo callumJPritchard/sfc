@@ -1,6 +1,6 @@
 import { tags, createComponent, ArgType } from "../../../lib/src/index";
 
-const { p, button, form, input } = tags;
+const { p, button, form, div, input } = tags;
 
 export function pageLets(...children: ArgType[]) {
   const [setSelected, renderPagelets] = createComponent<number>(
@@ -21,5 +21,5 @@ export function pageLets(...children: ArgType[]) {
     );
   }
 
-  return [...buttons, renderPagelets];
+  return div([...buttons, renderPagelets]);
 }
