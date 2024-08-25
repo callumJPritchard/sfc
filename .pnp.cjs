@@ -322,7 +322,7 @@ const RAW_RUNTIME_STATE =
     ]],\
     ["typescript", [\
       ["patch:typescript@npm%3A5.5.4#optional!builtin<compat/typescript>::version=5.5.4&hash=379a07", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/typescript-patch-fe43cd9db9-10c0.zip/node_modules/typescript/",\
+        "packageLocation": "../../../.yarn/berry/cache/typescript-patch-fe43cd9db9-10c0.zip/node_modules/typescript/",\
         "packageDependencies": [\
           ["typescript", "patch:typescript@npm%3A5.5.4#optional!builtin<compat/typescript>::version=5.5.4&hash=379a07"]\
         ],\
